@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- typeAliases多个类型别名 -->
+	<typeAliases>
+		<!-- typeAlias每个都是类型别名 -->
+		<typeAlias type="com.webcode.cn.entity.User" alias="user"/>
+		 
+		<!-- package使用包名，自动扫描，进行别名配置
+				com.webcode.cn.entity.User		自动别名是 user	
+		 -->
+		<package name="com.webcode.cn.entity"/>
+	</typeAliases>
+	
+	  <environments default="development">
+	    <environment id="development">
+	      <transactionManager type="JDBC">
+	      	<property name="autoCommit" value="true"/>
+	      </transactionManager>
+	      <dataSource type="POOLED">
+	        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+	        <property name="url" value="jdbc:mysql://localhost:3333/mybatis?characterEncoding=utf8&amp;serverTimezone=UTC"/>
+	        <property name="username" value="root"/>
+	        <property name="password" value="root"/>
+	      </dataSource>
+	    </environment>
+	  </environments>
+	  <mappers>
+	    <mapper resource="com/webcode/cn/mapper/UserMapper.xml"/>
+	  </mappers>
+	  
+</configuration>
