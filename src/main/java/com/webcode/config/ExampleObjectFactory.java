@@ -33,14 +33,14 @@ public class ExampleObjectFactory extends DefaultObjectFactory {
 	
 	@Override
 	public <T> T create(Class<T>  type) {
-		log.info("使用定制对象工厂的create方法构建单个对象");
+//		log.info("使用定制对象工厂的create方法构建单个对象");
 	 return super.create(type);
 	}
 	
 	@Override
 	public <T> T create(Class<T>  type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
 		
-		log.info("使用定制对象工厂的create方法构建列表对象");
+//		log.info("使用定制对象工厂的create方法构建列表对象");
 		return super.create(type, constructorArgTypes, constructorArgs);
 	}
 	

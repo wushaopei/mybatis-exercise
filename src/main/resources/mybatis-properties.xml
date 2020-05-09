@@ -20,5 +20,10 @@
   </environments>
   <mappers>
     <mapper resource="com/webcode/cn/mapper/UserMapper.xml"/>
+    <mapper resource="com/webcode/cn/mapper/RoleMapper.xml"/>
+    <mapper resource="com/webcode/association/mapper/KeyMapper.xml"/>
+    <mapper resource="com/webcode/association/mapper/LockMapper.xml"/>
+    <mapper resource="com/webcode/collection/mapper/ClazzMapper.xml"/>
+    <mapper resource="com/webcode/collection/mapper/StudentMapper.xml"/>
   </mappers>
 </configuration>

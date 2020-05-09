@@ -9,6 +9,17 @@
   			二种情况是：使用Mapper接口的全类名
    -->
  <mapper namespace="com.webcode.cn.mapper.UserMapper"> 
+
+ 
+ 
+ 	<sql id="user_columns">
+ 		id,last_name ,sex
+ 	</sql>
+  <resultMap type="com.webcode.cn.entity.User" id="userResultMap">
+  	<id property="id" column="id"/>
+  	<result property="last_name" column="lastName"/>
+  	<result property="sex" column="sex"/>
+  </resultMap>
  <!--   <mapper namespace="com.webcode.cn.entity.User">	-->
   <!-- 
   	select标签用来配置一个select语句
@@ -16,9 +27,15 @@
   		resultType 是查询完之后一条记录对应转换成为的javaBean对象
   		#{id}是点位符
    -->
+  
+  <!-- <select id="selectUserById" resultMap="userResultMap">
+    	select <include refid="user_columns"/> from t_user where id = #{id}
+  </select> -->
+  
   <select id="selectUserById" resultType="com.webcode.cn.entity.User">
     	select id,last_name lastName,sex from t_user where id = #{id}
-  </select>
+  </select>  
+  
   <!-- 查询全部的User对象 -->
   <select id="queryUsers" resultType="com.webcode.cn.entity.User">
   		select id,last_name lastName,sex from t_user
@@ -29,8 +46,11 @@
   </select>
   
   <!--   parameterType 参数类型（可选） -->
-  <insert id="saveUser" parameterType="com.webcode.cn.entity.User">
-  		insert into t_user(`last_name`,`sex`) values(#{lastName},#{sex})
+  <insert id="saveUser" parameterType="com.webcode.cn.entity.User" useGeneratedKeys="true" keyProperty="id">
+  		<selectKey   keyProperty="id"   resultType="int"   order="BEFORE"   statementType="PREPARED">
+  			 select if(max(id) is null, 1, max(id) + 2) as newId from t_user
+  		</selectKey>	
+  		insert into t_user(id,`last_name`,`sex`) values(#{id},#{lastName},#{sex})
   </insert>
   
   <!--   根据id删除一个用户 -->
@@ -42,4 +62,87 @@
   		update t_user set last_name = #{lastName},sex = #{sex} where id = #{id}
   </update>
   
+  
+  <select id="selectUserByName" resultType="com.webcode.cn.entity.User" parameterType="com.webcode.cn.entity.User">
+    	select id,last_name lastName,sex from t_user where last_name = ${lastName} and sex = #{sex}
+  </select>
+  
+  
+  <!-- 定义表名的 sql 参数 -->
+	<sql id="sometable">
+	  ${prefix}
+	</sql>
+	
+	<sql id="someinclude">  <!-- 将表名的引入使用 sql 参数包裹 -->
+	  from
+	    <include refid="${include_target}"/>    <!-- 使用 ${} 引入表名key -->
+	</sql>
+	
+	<select id="selects" resultType="map">
+	  select  *    
+	  <include refid="someinclude"> 		<!-- 引入 from table 语句 -->
+	    <property name="prefix" value="t_user"/>			 
+	    <property name="include_target" value="sometable"/>
+	  </include>
+	</select>
+
+	<!-- 动态 SQL  -->
+	<select id="queryUserByNameAndSex" resultType="com.webcode.cn.entity.User">
+		select 
+			id,last_name lastName,sex 
+		from 
+			t_user 
+		where 
+		<!-- 做if判断 -->
+		<if test="lastName != null">
+			last_name like concat('%',#{lastName},'%') 
+		</if>
+		<if test="sex == 0 || sex == 1">
+			and sex = #{sex}
+		</if>
+	</select>
+	
+	<select id="queryUsersByNameOrSexChoose" resultType="com.webcode.cn.entity.User">
+		select
+			id,last_name lastName,sex 
+		from 
+			t_user
+		<where>
+			<choose>
+				<when test="lastName != null">
+					last_name like concat('%',#{lastName},'%')
+				</when>
+				<when test="sex == 1 || sex == 0">
+					sex = #{sex}
+				</when>
+				<otherwise>
+					1 = 1
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<select id="queryUserByNameAndSexTrim" resultType="com.webcode.cn.entity.User">
+		select 
+			id,last_name lastName,sex 
+		from 
+			t_user 
+		<!-- 
+			trim 语句可以去掉包含内容的前面或后台的指定内容
+				prefixOverrides="and" 	去掉前缀add
+				suffixOverrides="and"	去掉后缀add
+				prefix					在内容前面添加where
+				suffix=""				在内容后面添加
+		-->
+		<trim prefixOverrides="and" suffixOverrides="and" prefix="where" >
+			<!-- 做if判断 -->
+			<if test="lastName != null">
+				last_name like concat('%',#{lastName},'%') and 
+			</if>
+			<if test="sex == 0 || sex == 1">
+				sex = #{sex}
+			</if>
+		</trim> 
+	</select>
+	
 </mapper>

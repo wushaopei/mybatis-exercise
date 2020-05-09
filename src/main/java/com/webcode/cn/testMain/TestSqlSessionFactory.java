@@ -44,7 +44,7 @@ public class TestSqlSessionFactory {
 			session = sqlSessionFactory.openSession();
 //			selectOne方法用来执行select查询语句，并返回一个对象
 			// 放名称空间+id
-			User user = session.selectOne("com.webcode.cn.entity.User.selectUserById", 1);
+			User user = session.selectOne("com.webcode.cn.entity.User.selectUserById", 2);
 			System.out.println( user );
 			
 		} catch (Exception e) {
